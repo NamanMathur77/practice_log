@@ -57,3 +57,8 @@ public class HelloWorld
     }
 }
 ```
+
+### Why lookup is fast in dictionary?
+
+It is because it uses hash table under the hood. When the data is stored in the dictionary a hash code is calculated and data is stored with the hashcode and when we want to lookup we recalculate the hashcode and it directly lands on the calculated hashcode making time complexity to O(1).
+

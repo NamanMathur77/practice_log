@@ -87,4 +87,9 @@ public class Product
 | `internal`  | Within same assembly           |
 | `public`    | Everywhere                     |
 
+### What is an Assembly?
+
+An assembly is usually a .dll or .exe that gets compiled from your C# project. If you are working on one project then everything will be in one assembly only. If the solution has multiple projects then each projects becomes different assembly.
+
+
 

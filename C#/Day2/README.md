@@ -7,7 +7,7 @@ Both class and struct are used to define custom data types.
 struct are value type and class are reference type
 
 ### Memory
-struct are stored in heap and class are stored in heap
+struct are stored in stack and class are stored in heap
 
 ### Copy
 struct are copied by value and class are copied by reference

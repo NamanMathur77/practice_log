@@ -6,7 +6,7 @@ It is achieved using abstract class, interface and access modifiers
 
 ### Abstract class
 
-An abstract class is a class that cannot be instantiated on its own and can contian:
+An abstract class is a class that cannot be instantiated on its own and can contain:
 1. Abstract methods (without implementation)
 2. Non-abstract methods (with default implementation)
 
@@ -109,6 +109,55 @@ public class File : IReadable, IWritable
     public void Write()
     {
         Console.WriteLine("Writing to file");
+    }
+}
+```
+
+### In multiple interface inheritance if 2 parent interfaces have same name methods then if we implement it, it will give compilation error
+
+```C#
+interface IFirst
+{
+    int GetData();
+}
+
+interface ISecond
+{
+    string GetData(); // Same method name, different return type
+}
+
+class MyClass : IFirst, ISecond
+{
+    public int GetData() // Trying to implement both
+    {
+        return 42;
+    }
+}
+```
+
+but to avoid this we need to implement both the methods separately
+
+```C#
+interface IFirst
+{
+    int GetData();
+}
+
+interface ISecond
+{
+    string GetData();
+}
+
+class MyClass : IFirst, ISecond
+{
+    int IFirst.GetData()
+    {
+        return 100;
+    }
+
+    string ISecond.GetData()
+    {
+        return "Hello";
     }
 }
 ```
