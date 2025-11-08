@@ -54,18 +54,43 @@ Worker thread running
 
 
 ### What are Process?
-
 Process is something that operating system uses to execute a program by providing the resources required. Processes can be viewed in the task manager.
 
 
 ### What is the difference between Thread and Process?
-
 A process is a collection of resources like virtual address space, code etc. A process can start multiple threads. Every process starts with a single thread. You can create multiple threads in the process and threads share resources allocated to the process.
 
 ### Why do we need multi threading in our project?
-
 1. You can do multiple tasks simultaneously.
 2. Threads are lightweight than processes as they down own resources they use the resources allocated to process.
 3. Context switching takes less time in threads.
 
+
+### What is multithreading in C#?
+Multithreading is the process of running multiple threads concurrently within a single process to improve performance and responsiveness.
+
+### What is a threadpool in C#?
+A threadpool is a collection of reusable threads managed by .Net runtime, used for short lived background tasks.
+
+### How do you stop a thread in C#?
+Stopping a thread is done using flags or CancellationToken. Should not be done using Thread.Abort() as it is unsafe.
+```C#
+using System.Threading;
+using System.Threading.Tasks;
+
+class Program {
+static void Main() {
+CancellationTokenSource cts = new CancellationTokenSource();
+Task.Run(() => {
+while (!cts.Token.IsCancellationRequested) {
+Console.WriteLine("Running...");
+Thread.Sleep(500);
+}
+});
+
+Thread.Sleep(2000);
+cts.Cancel(); // Gracefully stop the task
+}
+}
+```
 
