@@ -94,3 +94,136 @@ cts.Cancel(); // Gracefully stop the task
 }
 ```
 
+### What are race conditions, and how to prevent them?
+A race condition occurs when two or more threads access shared data at the same time, and final result depends on the timing of how those threads execute.
+
+```C#
+using System;
+using System.Threading;
+
+class Program
+{
+    static int counter = 0;
+
+    static void Main()
+    {
+        Thread t1 = new Thread(Increment);
+        Thread t2 = new Thread(Increment);
+
+        t1.Start();
+        t2.Start();
+
+        t1.Join();
+        t2.Join();
+
+        Console.WriteLine($"Final Counter: {counter}");
+    }
+
+    static void Increment()
+    {
+        for (int i = 0; i < 100000; i++)
+        {
+            counter++;
+        }
+    }
+}
+```
+
+Here the output in ideal condition is 200000 but sometimes when two thread are running concurrently one thread might increase the value while the other one read the previous value so both are increasing counter to same value or might be that the counter is increased more then 2 time in a single run so value can be 178889 ... 
+
+To prevent this we may use
+1. Lock
+```C#
+private static object _lock = new object();
+private static int counter = 0;
+
+static void Increment()
+{
+    for (int i = 0; i < 100000; i++)
+    {
+        lock (_lock)
+        {
+            counter++;
+        }
+    }
+}
+```
+
+through this one thread at a time can enter the lock block while others wait until the lock is released 
+
+2. Monitor
+```C#
+using System;
+using System.Threading;
+
+class Program
+{
+    // Shared variable between threads
+    static int counter = 0;
+
+    // Lock object to synchronize access
+    private static readonly object _lock = new object();
+
+    static void Main()
+    {
+        Thread t1 = new Thread(Increment);
+        Thread t2 = new Thread(Increment);
+
+        t1.Start();
+        t2.Start();
+
+        t1.Join();
+        t2.Join();
+
+        Console.WriteLine($"Final Counter: {counter}");
+    }
+
+    static void Increment()
+    {
+        for (int i = 0; i < 100000; i++)
+        {
+            // Acquire lock manually
+            Monitor.Enter(_lock);
+            try
+            {
+                counter++;
+            }
+            finally
+            {
+                // Always release the lock, even if an exception occurs
+                Monitor.Exit(_lock);
+            }
+        }
+    }
+}
+```
+
+### What is asynchronous programming?
+Asynchronous programming is a way to execute code without blocking the main thread allowing other tasks to execute. That is allows other tasks to execute without waiting for long running tasks.
+
+#### Asynchronous code
+```C#
+Console.WriteLine("Start");
+var data = await File.ReadAllTextAsync("bigfile.txt"); // Non-blocking
+Console.WriteLine("File read complete");
+Console.WriteLine("End");
+```
+
+C# handles the asynchronous programming through async and await.
+```C#
+public async Task FetchDataAsync()
+{
+    Console.WriteLine("Fetching data...");
+    
+    // Simulate long-running task (e.g., web request)
+    await Task.Delay(3000); // Wait for 3 seconds asynchronously
+    
+    Console.WriteLine("Data fetched!");
+}
+```
+
+1. async tells the compiler that this method will contain asynchronous operations.
+2. await pauses the method until the awaited task completes.
+3. The thread is freed during the wait time and can handle other work.
+
+
