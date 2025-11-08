@@ -227,3 +227,44 @@ public async Task FetchDataAsync()
 3. The thread is freed during the wait time and can handle other work.
 
 
+### Task
+Task in C# represent unit of work that runs asynchronously
+
+```C#
+Task task = Task.Run(() =>
+{
+    Console.WriteLine("Running on background thread");
+});
+```
+
+you can wait for the task to finish synchrously using 
+```C#
+task.Wait()
+```
+
+Or you can wait asynchronously
+```C#
+await task
+```
+
+Task with return value
+
+```C#
+Task<int> getNumberTask = Task.Run(() =>
+{
+    Thread.Sleep(2000);
+    return 42;
+});
+
+int result = await getNumberTask; 
+Console.WriteLine(result); // 42
+```
+
+when there is an async call then any of these must be the return type
+
+| Return type                  | When to use                                  | Explanation                                                                                                                            |
+| ---------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Task`                       | when your method does **not return a value** | represents a “promise” that the operation will complete in the future.                                                                 |
+| `Task<T>`                    | when your method **returns a value**         | similar to `Task`, but also carries a result of type `T` (like `Task<int>`, `Task<string>`, etc.).                                     |
+| `void`                       | only for **event handlers**                  | because event handlers can’t return a task, but still can be `async`. However, it’s not awaitable — so exceptions are harder to catch. |
+| `ValueTask` / `ValueTask<T>` | advanced optimization (rare)                 | used when you want to reduce allocations for very frequent async calls that often complete synchronously.                              |
