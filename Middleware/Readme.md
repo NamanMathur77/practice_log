@@ -153,7 +153,7 @@ static void HandleMapTest2(IApplicationBuilder app)
 The following table shows the requests and responses from http://localhost:1234 using the preceding code.
 
 | Request             |	Response                     |
-|----------------------------------------------------|
+| ------------------- | ---------------------------- |
 | localhost:1234	  | Hello from non-Map delegate. |
 | localhost:1234/map1 |	Map Test 1                   |
 | localhost:1234/map2 |	Map Test 2                   |
