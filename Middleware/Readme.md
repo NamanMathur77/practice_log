@@ -158,3 +158,70 @@ The following table shows the requests and responses from http://localhost:1234 
 | localhost:1234/map1 |	Map Test 1                   |
 | localhost:1234/map2 |	Map Test 2                   |
 | localhost:1234/map3 |	Hello from non-Map delegate. |
+
+
+## Creating a cutom middleware
+
+createa new file LoggingMiddleware.cs
+```C#
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
+
+public class LoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public LoggingMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        Console.WriteLine($"[Request] {context.Request.Method} {context.Request.Path}");
+
+        await _next(context); // pass control to next middleware
+
+        stopwatch.Stop();
+        Console.WriteLine($"[Response] Status: {context.Response.StatusCode} | Time: {stopwatch.ElapsedMilliseconds} ms");
+    }
+}
+```
+
+Create a new file LoggingMiddlewareExtensions.cs
+```C#
+using Microsoft.AspNetCore.Builder;
+
+public static class LoggingMiddlewareExtensions
+{
+    public static IApplicationBuilder UseRequestLogger(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<LoggingMiddleware>();
+    }
+}
+```
+
+Register it in program.cs
+```C#
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+// 👇 Custom Middleware
+app.UseRequestLogger();
+
+// Built-in Middleware
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+```
+
+## Questions
+
+### 1*. What is middleware in .NET Core?
+Middleware is a software that is assembled in the pipeline to handle requests and response.
