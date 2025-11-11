@@ -53,3 +53,108 @@ app.Run();
 
 ```
 
+### Middleware order
+![middleware order](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/index/_static/middleware-pipeline.svg?view=aspnetcore-8.0)
+
+1. The order that middleware components are added in the Program.cs fiel defines the order in which the middleware components are invoked on requests and the reverse order for the response.
+2. The order is critical for security, performance and functionality.
+
+```C#
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WebMiddleware.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+// app.UseCookiePolicy();
+
+app.UseRouting();
+// app.UseRateLimiter();
+// app.UseRequestLocalization();
+// app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+// app.UseSession();
+// app.UseResponseCompression();
+// app.UseResponseCaching();
+
+app.MapRazorPages();
+app.MapDefaultControllerRoute();
+
+app.Run();
+```
+
+In this example UseCors, UseAuthentication, UseAuthorization must appear in the order shown.
+
+
+### Branch the middleware pipeline
+Map extensions are used as a convention for branching the pipeline. Map branches the request pipeline based on matches of the given request path.
+
+```C#
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+app.Map("/map1", HandleMapTest1);
+
+app.Map("/map2", HandleMapTest2);
+
+app.Run(async context =>
+{
+    await context.Response.WriteAsync("Hello from non-Map delegate.");
+});
+
+app.Run();
+
+static void HandleMapTest1(IApplicationBuilder app)
+{
+    app.Run(async context =>
+    {
+        await context.Response.WriteAsync("Map Test 1");
+    });
+}
+
+static void HandleMapTest2(IApplicationBuilder app)
+{
+    app.Run(async context =>
+    {
+        await context.Response.WriteAsync("Map Test 2");
+    });
+}
+
+```
+
+The following table shows the requests and responses from http://localhost:1234 using the preceding code.
+
+| Request             |	Response                     |
+|----------------------------------------------------|
+| localhost:1234	  | Hello from non-Map delegate. |
+| localhost:1234/map1 |	Map Test 1                   |
+| localhost:1234/map2 |	Map Test 2                   |
+| localhost:1234/map3 |	Hello from non-Map delegate. |
