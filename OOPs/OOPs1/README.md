@@ -1,5 +1,5 @@
 # OOPs
-Object Oriented Programming is a programming paradigm based on the concept of "objects" which have propertires and methods
+Object Oriented Programming is a programming paradigm based on the concept of "objects" which have properties and methods
 
 ## How OOPs help in programming?
 1. It helps in organizing code in a modular and reusable way
