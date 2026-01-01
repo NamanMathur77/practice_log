@@ -6,22 +6,18 @@ public class Solution {
         int i=0;
         int j = nums.Length-1;
         while(i<=j){
-            if(nums[i]==target){
-                return i;
+            int mean = (i+j)/2;
+            if(nums[mean]>target){
+                j = mean-1;
             }
-            if(nums[j]==target){
-                return j;
+            else if(nums[mean]<target){
+                i = mean+1;
             }
-            if(nums[j]>target){
-                j-=1;
-            }
-            if(nums[i]<target){
-                i+=1;
+            else{
+                return mean;
             }
         }
-
         return -1;
-
     }
 }
 ```
