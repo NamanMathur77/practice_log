@@ -36,3 +36,4 @@ CTS ensures that they all points to the same integral type
 
 ##### Common Language Specification(CLS)
 CLS is the subset of CTS it is the safe common part that all languages agree on.
+CLS ensures that the code written in one .NET language can be used by another .NET language.
