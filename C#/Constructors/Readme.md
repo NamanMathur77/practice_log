@@ -204,4 +204,36 @@ var config = new Configuration();
 5. Cannot be called directly
 
 
+#### Private constructor
 
+A constructor that cannot be called from outside the class. It is used for Singleton pattern
+
+```C#
+public class DatabaseManager{
+    private static DatabaseManager instance;
+    private static readonly object lockObject = new object();
+
+    private DatabaseManager(){
+        Console.WriteLine("Database connection initialized");
+    }
+
+    public static DatabaseManager Instance {
+        get {
+            if(instance == null){
+                lock(lockObject){
+                    if(instance == null){
+                        instance = new DatabaseManager();
+                    }
+                }
+            }
+            return instance;
+        }
+    }
+
+    public void ExecuteQuery(string query){
+        Console.WriteLine($"Executing {query}");
+    }
+}
+
+var db1 = DatabaseManager.Instance;
+d1.ExecuteQuery("Select * from users");
