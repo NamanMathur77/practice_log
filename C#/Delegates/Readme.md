@@ -81,4 +81,65 @@ foreach (var n in upperNames)
     Console.WriteLine(n);
 ```
 
+#### Built-in Delegates
+Action - void(no return)
+Func - returns a value
+Predicate - returns bool
+
+##### Action 
+```C#
+Action greet = ()=>Console.WriteLine("Hello");
+greet();
+
+Action<string> printName = (name)=>Console.WriteLine(name);
+printName("NAMAN");
+```
+
+#### Func
+```C#
+Func<int> getRandomNumber = ()=>new Random().Next(1, 100);
+int number = getRandomNumber();
+```
+
+#### Predicate
+```C#
+Predicate<int> isEven = (number) => number%2 == 0;
+```
+
+### Lambda Expressions
+A lambda expression is a short way to write an anonymous method
+
+```C#
+public int Add(int a, int b){
+    return a+b;
+}
+
+//with lambda method
+Func<int, int, int> add=(a, b)=>a+b;
+```
+
+### Multicast Delegates
+A delegates can hold references to multiple methods. When invoked, it calls all methods in order.
+
+```C#
+public delegate void Notify(string message);
+
+public void SendEmail(string message){
+    Console.WriteLine($"Email: {message}");
+}
+
+public void SendSMS(string message){
+    Console.WriteLine($"SMS: {message}");
+}
+
+public void Notifier(string message){
+    Console.WriteLine($"Notifier: {message}");
+}
+
+Notify notifier = SendEmail;
+notifier += SendSMS;
+notifier += LogMessage;
+
+notifier("Order placed successfully");
+```
 
