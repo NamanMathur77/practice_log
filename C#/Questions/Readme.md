@@ -51,6 +51,33 @@ No value types can be in heap if they are fields of aclass, they are boxed or th
 ### Can GC be forced? Should we do it?
 Yes GC can be forced using GC.Collect(), but it should generally be avoided bcoz it causes application pauses, disrupts optimization and often degrates performance.
 
-
 ### What happens internally when an exception is thrown?
 When an exception is thrown then CLR allocates an exception object on the heap, halts normal execution and then walks the call stack to find the matching handler the catch block and executes the finally blocks during this time. It transfers the control to the catch black or if no catch block is found then terminated the process.
+
+### What is the difference between value types and reference types?
+Value types are stored in stack whereas reference types are stored in heaps, value types are faster than reference types. Value types are scope based whereas reference types are managed by GC
+
+### What happens when you pass a value type to a method?
+A copy of the value is passed. Changes inside the method don't affect the original variable.
+```C#
+void ModifyValue(int number){
+    number = 100;
+}
+
+int x = 10;
+ModifyValue(x);
+Console.WriteLine(x); //10
+```
+
+### What happens when you pass reference type to method?
+The reference is passed by value, but both the caller and method points to the same object.
+```C#
+void ModifyValue(Person person){
+    person.Name = "Modified";
+}
+
+Person p = new Preson{Name = "original"};
+
+ModifyValue(p);
+Console.WriteLine(p.Name); //Modified
+```
