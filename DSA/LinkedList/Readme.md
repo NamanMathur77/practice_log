@@ -6,3 +6,6 @@
 
 #### How to reverse a Linked List
 ![alt text](image-2.png)
+
+#### Practice
+![alt text](image-3.png)
